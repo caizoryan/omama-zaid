@@ -46,14 +46,23 @@
 	}
 
 	.window video {
+		max-width: 90%;
+		max-height: 90%;
+	}
 
-		width: 80%;
+	.tl {
+		position: absolute;
+		left: .5em;
+		top: .5em;
 	}
 
 	.window {
-		width: 80vw;
-		height: 80vh;
+		position: relative;
+		width: 70vw;
+		height: 70vh;
 		background-color: #c4df5c;
+
+		border: 1px solid #2228;
 
 		display: flex;
 		justify-content: center;
@@ -62,6 +71,12 @@
 
 	.window:hover {
 		cursor: pointer;
+	}
+
+	button {
+		all: unset;
+		border: 1px solid #2228;
+		padding: .1em;
 	}
 
 	p.audio,

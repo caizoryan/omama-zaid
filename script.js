@@ -45,6 +45,7 @@ function Root() {
 		],
 
 		[".window", { style: mem(() => `position: fixed; top: ${top()}px; left: ${left()}px;`), ref },
+			["button.tl", { onclick: () => selectedvideo(null) }, "close"],
 			["video", { ref: videoref, src: selectedvideo }]]
 	])
 }

@@ -62,7 +62,7 @@ import { h as html } from "./concise_html/index.js";
 const sig = (val) => {
   const [getter, setter] = createSignal(val);
   let dual = (value) => {
-    if (value == undefined) return getter()
+    if (value === undefined) return getter()
     else return setter(value)
   }
   //getter.set = setter;
