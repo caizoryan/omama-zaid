@@ -8,7 +8,35 @@
 	<title>Alt-Practices Symposium</title>
 </head>
 <style>
-	* {}
+	@font-face {
+		font-family: "Marist";
+		src: url("./Marist.ttf");
+	}
+
+	* {
+		margin: 0;
+		padding: 0;
+
+	}
+
+	.container {
+		font-family: "Marist";
+		font-weight: 300;
+		display: grid;
+		grid-template-columns: 50% 50%;
+		width: 100vw;
+		height: 100vh;
+	}
+
+	.videos {
+		border-right: 1px solid black;
+		overflow-y: scroll;
+	}
+
+	video {
+		width: 80%;
+		margin: 2em;
+	}
 
 	body {
 		background-color: #c4df5c;
