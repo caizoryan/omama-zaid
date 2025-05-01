@@ -9,9 +9,43 @@ let selectedvideo = sig(undefined)
 let selectedaudio = sig(undefined)
 let audios = []
 
+let windows = mut([])
+let blendmodes = ["multiply", "difference", "exclusion", "blend", "lighten"]
+
+function window(src) {
+	let top = sig(Math.random() * 400)
+	let left = sig(Math.random() * 400)
+
+	let ref
+	let setref = (e) => ref = e
+	let videoref = (e) => videoref = e
+	let setvideoref = (e) => videoref = e
+	let play = () => videoref.play()
+	let blend = sig(blendmodes[Math.floor(Math.random() * blendmodes.length)])
+	let oninput = (e) => blend(e.target.value)
+
+	mounted(() => {
+		drag(ref, { set_left: left, set_top: top })
+		play()
+	})
+
+	return hdom([".window", { style: mem(() => `position: fixed; top: ${top()}px; left: ${left()}px; mix-blend-mode: ${blend()};`), ref: setref },
+		["button.tl", {
+			onclick: () => {
+				let index = windows.findIndex(e => e == src)
+				windows.splice(index, 1)
+			}
+		}, "close"],
+		["select.tll", { oninput },
+			...blendmodes.map(e => ["option", { value: e }, e])
+		],
+		["video", { loop: true, muted: true, ref: setvideoref, src }]]
+	)
+}
+
 function Root() {
 	function playvideo(src) {
-		selectedvideo("./" + src)
+		//selectedvideo("./" + src)
 		let index = Math.floor(Math.random() * data.audiofiles.length)
 		selectedaudio("./" + data.audiofiles[index])
 
@@ -19,27 +53,11 @@ function Root() {
 		audio.src = selectedaudio()
 		audios.push(audio)
 
+		windows.push("./" + src)
 		setTimeout(() => {
-			play()
 			audio.play()
 		}, 100)
 	}
-
-	let ref = (e) => ref = e
-	let videoref = (e) => videoref = e
-
-	let play = () => videoref.play()
-
-	let top = sig(0)
-	let left = sig(0)
-
-	eff_on(selectedvideo, () => {
-		if (selectedvideo()) {
-			top(window.innerHeight * .05)
-			left(window.innerWidth * .05)
-		}
-		else { top(-5000) }
-	})
 
 	eff_on(selectedaudio, () => {
 		let selects = document.querySelectorAll('p.audio')
@@ -49,10 +67,8 @@ function Root() {
 				e.scrollIntoView({ behavior: "smooth" })
 			}
 		})
-
 	})
 
-	mounted(() => { drag(ref, { set_left: left, set_top: top }) })
 
 	return hdom([".container",
 		[".videos",
@@ -71,9 +87,14 @@ function Root() {
 			}, src.replace("audio/", "")])
 		],
 
-		[".window", { style: mem(() => `position: fixed; top: ${top()}px; left: ${left()}px;`), ref },
-			["button.tl", { onclick: () => selectedvideo(null) }, "close"],
-			["video", { loop: true, muted: true, ref: videoref, src: selectedvideo }]]
+		["button.clear", {
+			onclick: () => {
+				windows.splice(0, 999)
+				audios.forEach((e) => e.pause())
+			}
+		}, "x"],
+
+		() => each(windows, window)
 	])
 }
 
