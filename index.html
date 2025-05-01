@@ -29,13 +29,47 @@
 	}
 
 	.videos {
-		border-right: 1px solid black;
 		overflow-y: scroll;
+		height: 100%;
 	}
 
-	video {
+	.audios {
+		overflow-y: scroll;
+		height: 100%;
+	}
+
+	.videos video {
 		width: 80%;
-		margin: 2em;
+		margin: 1em;
+		padding: 1em;
+		border: 1px solid #2228;
+	}
+
+	.window video {
+
+		width: 80%;
+	}
+
+	.window {
+		width: 80vw;
+		height: 80vh;
+		background-color: #c4df5c;
+
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.window:hover {
+		cursor: pointer;
+	}
+
+	p.audio,
+	p.video {
+		width: 80%;
+		margin: 1em;
+		padding: 1em;
+		border: 1px solid #2228;
 	}
 
 	body {
