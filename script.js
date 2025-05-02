@@ -9,6 +9,7 @@ let selectedvideo = sig(undefined)
 let selectedaudio = sig(undefined)
 let audios = []
 
+let audiostrs = mut([])
 let windows = mut([])
 let blendmodes = ["multiply", "difference", "exclusion", "blend", "lighten"]
 
@@ -45,15 +46,20 @@ function window(src) {
 
 function Root() {
 	function playvideo(src) {
+		aboutshow(false)
 		//selectedvideo("./" + src)
 		let index = Math.floor(Math.random() * data.audiofiles.length)
-		selectedaudio("./" + data.audiofiles[index])
-
-		let audio = new Audio()
-		audio.src = selectedaudio()
-		audios.push(audio)
-
+		let audiosrc = "./" + data.audiofiles[index]
+		playaudio(audiosrc)
 		windows.push("./" + src)
+	}
+
+	function playaudio(src) {
+		aboutshow(false)
+		audiostrs.push(src)
+		let audio = new Audio()
+		audio.src = src
+		audios.push(audio)
 		setTimeout(() => {
 			audio.play()
 		}, 100)
@@ -69,6 +75,14 @@ function Root() {
 		})
 	})
 
+	let clear = () => {
+		windows.splice(0, 999)
+		audios.forEach((e) => e.pause())
+		audiostrs.splice(0, 999)
+	}
+
+	let aboutshow = sig(false)
+
 
 	return hdom([".container",
 		[".videos",
@@ -76,25 +90,35 @@ function Root() {
 				.map((src) => ["p.video",
 					{
 						onclick: () => playvideo(src),
-						selection: mem(() => selectedvideo() == "./" + src ? "true" : "false"),
+						selection: mem(() => windows.includes("./" + src) ? "true" : "false"),
 					},
 					src.replace("clips/", "").replace("clips2/", "")])
 		],
 
 		[".audios",
 			data.audiofiles.map((src) => ["p.audio", {
-				selection: mem(() => selectedaudio() == "./" + src ? "true" : "false"),
+				onclick: () => playaudio("./" + src),
+				selection: mem(() => audiostrs.includes("./" + src) ? "true" : "false"),
 			}, src.replace("audio/", "")])
 		],
 
-		["button.clear", {
-			onclick: () => {
-				windows.splice(0, 999)
-				audios.forEach((e) => e.pause())
-			}
-		}, "x"],
+		() => each(windows, window),
 
-		() => each(windows, window)
+		[".about", {
+			style: mem(() => aboutshow() ? "right: 1em;" : "right: -100vw;"),
+		}, [
+				["h4", "About"],
+				["p", `This website is the speculative afterplace of Zaid Irfan and Omama Mahmood's audio visual experimentation project carried out in February 2025. This project was an attempt to invoke inspiriation for a fictional screenplay written by Zaid, and then turned into a website that seeks to archive as well as host as a place of cocreation of audio visual exploration.`],
+				["p", `Think of it as a "poster generator" but instead of images, you're overlapping sounds and video footage.`],
+			]],
+
+		["button.about-btn", {
+			onclick: () => { aboutshow(!aboutshow()) }
+		}, "About"],
+		["button.clear.topright", { onclick: clear }, "x"],
+		["button.clear.topleft", { onclick: clear }, "x"],
+		["button.clear.bottomright", { onclick: clear }, "x"],
+		["button.clear.bottomleft", { onclick: clear }, "x"],
 	])
 }
 
